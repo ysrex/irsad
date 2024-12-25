@@ -1,0 +1,40 @@
+@font-face {
+    font-family: 'Inter';
+    src: url('Inter-Medium.html') format('woff2'),
+    url('Inter-Medium-2.html') format('woff'),
+    url('Inter-Medium-3.html') format('truetype');
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('Inter-Regular.html') format('woff2'),
+    url('Inter-Regular-2.html') format('woff'),
+    url('Inter-Regular-3.html') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('Inter-Bold.html') format('woff2'),
+    url('Inter-Bold-2.html') format('woff'),
+    url('Inter-Bold-3.html') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Inter';
+    src: url('Inter-SemiBold.html') format('woff2'),
+    url('Inter-SemiBold-2.html') format('woff'),
+    url('Inter-SemiBold-3.html') format('truetype');
+    font-weight: 600;
+    font-style: normal;
+    font-display: swap;
+}
+
